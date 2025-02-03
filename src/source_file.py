@@ -5,9 +5,10 @@ import re
 
 from prompt import Prompt
 
+
 class SourceFile(object):
 
-    def __init__ (self, file: Path, logger: Logger):
+    def __init__(self, file: Path, logger: Logger):
         self._file = file
         self._logger = logger
         self._prompts: dict[str, Prompt] = {}
@@ -33,7 +34,7 @@ class SourceFile(object):
                 text = match.group('text')
                 separator = match.group('separator')
                 regex = r'(^' + separator + r')|([^\\]' + separator + r')'
-                if re.search(regex,text):
+                if re.search(regex, text):
                     self._logger.warning("====  String separator found in text !!!")
                     self._logger.warning(f"      Fichier: {self._file.as_uri()}")
                     self._logger.warning(f"      texte  : {text}")

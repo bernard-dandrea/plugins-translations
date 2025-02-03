@@ -19,7 +19,7 @@ class Translations():
             pass
             # print(f"2 differents translations for '{text}', keeping first one: '{self._translation[text].get_translation(language)}' <> '{new_translation}'")
         else:
-            pass #all fine, we found twice the same text and same translation
+            pass  # all fine, we found twice the same text and same translation
 
     def __contains__(self, text):
         return text in self._translation
