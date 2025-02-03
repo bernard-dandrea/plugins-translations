@@ -26,8 +26,9 @@ from consts import (
     PLUGIN_INFO_JSON,
     PLUGIN_ROOT,
     TRANSLATIONS_FILES_PATH
-    )
+)
 from translations import Translations
+
 
 class TranslatePlugin():
 
@@ -46,7 +47,6 @@ class TranslatePlugin():
         logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
         logging.getLogger('deepl').setLevel(logging.WARNING)
 
-
         self._core_root = Path.cwd()/CORE_ROOT
         self._core_translations = Translations()
 
@@ -60,7 +60,7 @@ class TranslatePlugin():
         self.__get_inputs()
         self.__read_info_json()
 
-        self.__glossary: dict[str, deepl.GlossaryInfo] = {l:None for l in self._target_languages}
+        self.__glossary: dict[str, deepl.GlossaryInfo] = {lang: None for lang in self._target_languages}
 
     def __del__(self):
         if self.__translator is None:
@@ -162,7 +162,7 @@ class TranslatePlugin():
 
     def __write_info_json(self):
         self.__info_json_content['language'] = sorted(set([self._source_language] + self._target_languages))
-        self.__info_json_file.write_text(json.dumps(self.__info_json_content, ensure_ascii=False, indent= '\t'), encoding="UTF-8")
+        self.__info_json_file.write_text(json.dumps(self.__info_json_content, ensure_ascii=False, indent='\t'), encoding="UTF-8")
 
     def __create_deepl_glossaries(self):
         fileDir = Path(__file__).parent
@@ -176,14 +176,14 @@ class TranslatePlugin():
         deepl_glossaries = self.__translator.list_glossaries()
 
         for target_language in self._target_languages:
-            if target_language ==  self._source_language or target_language not in entries:
+            if target_language == self._source_language or target_language not in entries:
                 continue
             self._logger.info(f"Check glossary {self._source_language}=>{target_language}")
 
             for deepl_glossary in deepl_glossaries:
                 if deepl_glossary.source_lang == LANGUAGES_TO_DEEPL_GLOSSARY[self._source_language] and deepl_glossary.target_lang == LANGUAGES_TO_DEEPL_GLOSSARY[target_language]:
-                    if deepl_glossary.name == md5_hash :
-                        self._logger.info(f"Already exists")
+                    if deepl_glossary.name == md5_hash:
+                        self._logger.info("Already exists")
                         self.__glossary[target_language] = deepl_glossary
                     else:
                         self._logger.info(f"Delete existing old glossary {deepl_glossary.name}")
@@ -235,7 +235,7 @@ class TranslatePlugin():
                 if self.translator is not None:
                     # make call to deepl translator for any missing translations
                     for target_language in self._target_languages:
-                        if target_language==self._source_language:
+                        if target_language == self._source_language:
                             continue
                         if not prompt.has_translation(target_language):
                             tr = self.transalte_with_deepl(prompt.get_text(), target_language)
@@ -272,8 +272,14 @@ class TranslatePlugin():
 
         self._logger.debug(f"call deepl to translate {text} in {target_language}")
         self.__api_call_counter += 1
-        result = self.translator.translate_text(text, source_lang=LANGUAGES_TO_DEEPL[self._source_language], target_lang=LANGUAGES_TO_DEEPL[target_language],
-                                                    preserve_formatting=True, context='home automation', glossary=self.__glossary[target_language])
+        result = self.translator.translate_text(
+            text,
+            source_lang=LANGUAGES_TO_DEEPL[self._source_language],
+            target_lang=LANGUAGES_TO_DEEPL[target_language],
+            preserve_formatting=True,
+            context='home automation',
+            glossary=self.__glossary[target_language]
+        )
         return result.text
 
     def get_plugin_translations(self):
@@ -319,7 +325,8 @@ class TranslatePlugin():
 
             if (len(language_result) > 0):
                 self._logger.info(f"Will dump {translation_file.as_posix()}")
-                translation_file.write_text(json.dumps(language_result, ensure_ascii=False, sort_keys = True, indent= 4).replace('/', r'\/'), encoding="UTF-8")
+                translation_file.write_text(json.dumps(language_result, ensure_ascii=False, sort_keys=True, indent=4).replace('/', r'\/'), encoding="UTF-8")
+
 
 if __name__ == "__main__":
     TranslatePlugin().start()
