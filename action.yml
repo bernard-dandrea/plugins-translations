@@ -72,6 +72,7 @@ runs:
         generate_source_language_translations: ${{ inputs.generate_source_language_translations }}
         debug: ${{ inputs.debug }}
       run: |
+        cd ${{ github.action_path }}
         python -m src.translate_plugin
 
     - name: "Create Pull Request to plugin..."
