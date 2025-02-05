@@ -298,11 +298,13 @@ class PluginTranslator():
             if not file.exists():
                 self.__logger.info(f"file {file.as_posix()} not found !?")
                 continue
-
-            data = json.loads(file.read_text(encoding="UTF-8"))
-            for path in data:
-                for text in data[path]:
-                    self.__existing_translations.add_translation(language, text, data[path][text])
+            try:
+                data = json.loads(file.read_text(encoding="UTF-8"))
+                for path in data:
+                    for text in data[path]:
+                        self.__existing_translations.add_translation(language, text, data[path][text])
+            except json.JSONDecodeError as e:
+                self.__logger.error(f"Error while reading {file.as_posix()}: {e}")
 
     def write_plugin_translations(self):
         self.__logger.info("Write translations files...")
