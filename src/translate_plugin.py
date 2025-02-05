@@ -147,6 +147,8 @@ class TranslatePlugin():
 
     def _get_list_input(self, name: str, allowed_values: list):
         val = self._get_input(name)
+        if val is None:
+            raise ValueError(f'Input does not meet specifications: {name}.\n {name} is required')
         list = [s.strip() for s in val.split(',')]
         for s in list:
             if s not in allowed_values:
