@@ -6,9 +6,9 @@ import hashlib
 
 import deepl
 
-from version import VERSION
-from source_file import SourceFile
-from consts import (
+from .version import VERSION
+from .source_file import SourceFile
+from .consts import (
     ALL_LANGUAGES,
     CORE_ROOT,
     FR_FR,
@@ -28,13 +28,13 @@ from consts import (
     PLUGIN_ROOT,
     TRANSLATIONS_FILES_PATH
 )
-from translations import Translations
+from .translations import Translations
 
 
 class TranslatePlugin():
 
-    def __init__(self) -> None:
-        self._plugin_root = Path.cwd()/PLUGIN_ROOT
+    def __init__(self, cwd: Path = Path.cwd()) -> None:
+        self._plugin_root = cwd/PLUGIN_ROOT
 
         self._files: dict[str, SourceFile] = {}
         self._existing_translations = Translations()
@@ -48,7 +48,7 @@ class TranslatePlugin():
         logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
         logging.getLogger('deepl').setLevel(logging.WARNING)
 
-        self._core_root = Path.cwd()/CORE_ROOT
+        self._core_root = cwd/CORE_ROOT
         self._core_translations = Translations()
 
         self.__translator: deepl.Translator = None
@@ -283,7 +283,8 @@ class TranslatePlugin():
             target_lang=LANGUAGES_TO_DEEPL[target_language],
             preserve_formatting=True,
             context='home automation',
-            glossary=self.__glossary[target_language]
+            glossary=self.__glossary[target_language],
+            model_type='prefer_quality_optimized'
         )
         return result.text
 

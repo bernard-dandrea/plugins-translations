@@ -1,4 +1,4 @@
-from prompt import Prompt
+from .prompt import Prompt
 
 
 class Translations():

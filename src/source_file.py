@@ -3,7 +3,7 @@ from logging import Logger
 from pathlib import Path
 import re
 
-from prompt import Prompt
+from .prompt import Prompt
 
 
 class SourceFile(object):
