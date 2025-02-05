@@ -211,7 +211,7 @@ class PluginTranslator():
                     filename = Path(file)
                     if filename.suffix in FILE_EXTS:
                         absolute_file_path = root/filename
-                        jeedom_file_path = absolute_file_path.relative_to(self._plugin_root)
+                        jeedom_file_path = absolute_file_path.relative_to(self.__plugin_root)
                         jeedom_file_path = (f"plugins/{self.plugin_id}"/jeedom_file_path).as_posix()
                         self.__logger.info(f"    {jeedom_file_path}...")
                         self.__files[jeedom_file_path] = SourceFile(absolute_file_path, self.__logger)
