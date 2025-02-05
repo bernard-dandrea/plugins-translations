@@ -6,7 +6,7 @@ import hashlib
 
 import deepl
 
-from . import version
+from .version import VERSION
 from .source_file import SourceFile
 from .consts import (
     ALL_LANGUAGES,
@@ -63,7 +63,7 @@ class TranslatePlugin():
 
         self.__glossary: dict[str, deepl.GlossaryInfo] = {lang: None for lang in self._target_languages}
 
-        self._logger.info(f"Translate plugin module version {version.VERSION} initialized with deepl version {deepl.__version__}")
+        self._logger.info(f"Translate plugin module version {VERSION} initialized with deepl version {deepl.__version__}")
 
     def __del__(self):
         if self.__translator is None:
