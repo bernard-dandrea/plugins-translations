@@ -1,3 +1,5 @@
+__version__ = "1.1.0"
+
 import json
 import logging
 import os
@@ -61,6 +63,8 @@ class TranslatePlugin():
         self.__read_info_json()
 
         self.__glossary: dict[str, deepl.GlossaryInfo] = {lang: None for lang in self._target_languages}
+
+        self._logger.info(f"Translate plugin module version {__version__} initialized")
 
     def __del__(self):
         if self.__translator is None:
