@@ -3,10 +3,8 @@ import os
 from pathlib import Path
 import pytest
 
-# from translate_plugin import TranslatePlugin
-
-from src import translate_plugin
-from src.consts import (
+from plugintranslations.translator import PluginTranslator
+from plugintranslations.consts import (
     EN_US,
     FR_FR,
     ES_ES,
@@ -51,6 +49,6 @@ class TestTranslatePlugin():
         info_json_file.write_text(json.dumps(info_json_content, ensure_ascii=False, indent='\t'), encoding="UTF-8")
 
     def test_translate_plugin(self, current_working_dir):
-        self._test_translate = translate_plugin.TranslatePlugin(current_working_dir)
+        self._test_translate = PluginTranslator(current_working_dir)
         assert self._test_translate is not None
-        assert isinstance(self._test_translate, translate_plugin.TranslatePlugin)
+        assert isinstance(self._test_translate, PluginTranslator)

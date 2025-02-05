@@ -73,8 +73,7 @@ runs:
         debug: ${{ inputs.debug }}
       run: |
         export PYTHONPATH=$PYTHONPATH:${{ github.action_path }}
-        echo "PYTHONPATH=$PYTHONPATH"
-        python -m src.translate_plugin
+        python -m plugintranslations
 
     - name: "Create Pull Request to plugin..."
       uses: peter-evans/create-pull-request@v7
