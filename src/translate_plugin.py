@@ -6,9 +6,9 @@ import hashlib
 
 import deepl
 
-from .version import VERSION
-from .source_file import SourceFile
-from .consts import (
+from version import VERSION
+from source_file import SourceFile
+from consts import (
     ALL_LANGUAGES,
     CORE_ROOT,
     FR_FR,
@@ -28,7 +28,7 @@ from .consts import (
     PLUGIN_ROOT,
     TRANSLATIONS_FILES_PATH
 )
-from .translations import Translations
+from translations import Translations
 
 
 class TranslatePlugin():
