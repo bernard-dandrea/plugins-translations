@@ -1,5 +1,3 @@
-__version__ = "1.1.0"
-
 import json
 import logging
 import os
@@ -8,8 +6,9 @@ import hashlib
 
 import deepl
 
-from source_file import SourceFile
-from consts import (
+from . import version
+from .source_file import SourceFile
+from .consts import (
     ALL_LANGUAGES,
     CORE_ROOT,
     FR_FR,
@@ -29,7 +28,7 @@ from consts import (
     PLUGIN_ROOT,
     TRANSLATIONS_FILES_PATH
 )
-from translations import Translations
+from .translations import Translations
 
 
 class TranslatePlugin():
@@ -64,7 +63,7 @@ class TranslatePlugin():
 
         self.__glossary: dict[str, deepl.GlossaryInfo] = {lang: None for lang in self._target_languages}
 
-        self._logger.info(f"Translate plugin module version {__version__} initialized")
+        self._logger.info(f"Translate plugin module version {version.VERSION} initialized with deepl version {deepl.__version__}")
 
     def __del__(self):
         if self.__translator is None:
