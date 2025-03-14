@@ -2,6 +2,8 @@
 
 A GitHub action to automatically generate translation files for your plugins and optionally automatically translated texts if all languages you want.
 
+[![pytest](https://github.com/Mips2648/plugins-translations/actions/workflows/pytest.yml/badge.svg)](https://github.com/Mips2648/plugins-translations/actions/workflows/pytest.yml)
+
 ## How it works
 
 The idea is to trigger a new workflow with this Github action on each push to a branch on your repository (dev or beta branch, as you prefer).
