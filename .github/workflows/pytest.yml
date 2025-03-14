@@ -5,9 +5,9 @@ name: pytest
 
 on:
   push:
-    branches: [ "add-tests" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "add-tests" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
