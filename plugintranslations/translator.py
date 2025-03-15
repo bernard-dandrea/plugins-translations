@@ -50,7 +50,7 @@ class PluginTranslator():
 
         self.__core_root = cwd/CORE_ROOT
 
-        self.__deepl_translator: deepl.Translator = None
+        self.__deepl_translator: deepl.Translator | None = None
         self.__deepl_api_key: str = None
         self.__api_call_counter = 0
 
@@ -68,7 +68,8 @@ class PluginTranslator():
         if self.__deepl_translator is None:
             return
 
-    def __get_deepl_translator(self):
+    @property
+    def deepl_translator(self):
         if self.__deepl_translator is not None:
             return self.__deepl_translator
 
@@ -170,7 +171,7 @@ class PluginTranslator():
         str_entries = glossary_file.read_text(encoding="UTF-8")
         md5_hash = hashlib.md5(str_entries.encode('utf-8')).hexdigest()
         entries = json.loads(str_entries)
-        deepl_glossaries = self.__get_deepl_translator().list_glossaries()
+        deepl_glossaries = self.deepl_translator.list_glossaries()
 
         for target_language in self.__target_languages:
             if target_language == self.__source_language or target_language not in entries:
@@ -184,11 +185,11 @@ class PluginTranslator():
                         self.__glossary[target_language] = deepl_glossary
                     else:
                         self.__logger.info(f"Delete existing old glossary {deepl_glossary.name}")
-                        self.__get_deepl_translator().delete_glossary(deepl_glossary)
+                        self.deepl_translator.delete_glossary(deepl_glossary)
             if self.__glossary[target_language] is None:
                 self.__logger.info(f"Create new glossary {md5_hash}")
-                self.__glossary[target_language] = self.__get_deepl_translator().create_glossary(md5_hash, source_lang=LANGUAGES_TO_DEEPL_GLOSSARY[self.__source_language],
-                                                                                                 target_lang=LANGUAGES_TO_DEEPL_GLOSSARY[target_language], entries=entries[target_language])
+                self.__glossary[target_language] = self.deepl_translator.create_glossary(md5_hash, source_lang=LANGUAGES_TO_DEEPL_GLOSSARY[self.__source_language],
+                                                                                         target_lang=LANGUAGES_TO_DEEPL_GLOSSARY[target_language], entries=entries[target_language])
 
     def find_prompts_in_all_files(self):
         self.__logger.info("Find prompts in all plugin files")
@@ -230,7 +231,7 @@ class PluginTranslator():
                 # make sure to store text as a target translation for source language
                 prompt.set_translation(self.__source_language, prompt.get_text())
 
-                if self.__deepl_translator is not None:
+                if self.deepl_translator is not None:
                     # make call to deepl translator for any missing translations
                     for target_language in self.__target_languages:
                         if target_language == self.__source_language:
@@ -242,7 +243,7 @@ class PluginTranslator():
         self.__logger.info(f"Number of api call done: {self.__api_call_counter}")
 
     def translate_info_json(self):
-        if self.__deepl_translator is None:
+        if self.deepl_translator is None:
             return
 
         if 'description' not in self.__info_json_content:
