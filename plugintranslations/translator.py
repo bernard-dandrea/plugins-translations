@@ -254,6 +254,7 @@ class PluginTranslator():
 
         for target_language in self.__target_languages:
             if target_language in descriptions and descriptions[target_language] != '':
+                self.__logger.debug(f"Translation of description for {target_language} already exists, skipping...")
                 continue
             descriptions[target_language] = self.transalte_with_deepl(source_desc, target_language)
 
