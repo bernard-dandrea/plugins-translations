@@ -51,16 +51,16 @@ class PluginTranslator():
         self.__core_root = cwd/CORE_ROOT
 
         self.__deepl_translator: deepl.Translator | None = None
-        self.__deepl_api_key: str = None
+        self.__deepl_api_key: str | None = None
         self.__api_call_counter = 0
 
         self.__info_json_file: Path = self.__plugin_root/PLUGIN_INFO_JSON
-        self.__info_json_content: dict = None
+        self.__info_json_content: dict | None = None
 
         self.__get_inputs()
         self.__read_info_json()
 
-        self.__glossary: dict[str, deepl.GlossaryInfo] = {lang: None for lang in self.__target_languages}
+        self.__glossary: dict[str, deepl.GlossaryInfo | None] = {lang: None for lang in self.__target_languages}
 
         self.__logger.info(f"Translate plugin module version {VERSION} initialized with deepl version {deepl.__version__}")
 
@@ -199,16 +199,10 @@ class PluginTranslator():
                 for dirname in dirs:
                     if root.name == "core" and dirname == 'i18n':
                         dirs.remove(dirname)
-                    # for d in excludes:
-                    #     if fnmatch.fnmatch(dirname, d):
-                    #         dirs.remove(dirname)
 
                 for file in files:
                     if file == 'info.json':
                         continue
-                    # for f in excludes:
-                    #     if fnmatch.fnmatch(fileName, f):
-                    #         continue
                     filename = Path(file)
                     if filename.suffix in FILE_EXTS:
                         absolute_file_path = root/filename
