@@ -75,12 +75,12 @@ class PluginTranslator():
 
         if self.__deepl_api_key is not None:
             self.__deepl_translator = deepl.Translator(self.__deepl_api_key)
-            self.__create_deepl_glossaries()
+            self.__create_deepl_glossaries(self.__deepl_translator)
         return self.__deepl_translator
 
     @property
     def plugin_id(self) -> str:
-        return self.__info_json_content['id']
+        return self.__info_json_content['id'] if self.__info_json_content is not None else 'unknown'
 
     def start(self):
         self.get_plugin_translations()
@@ -159,10 +159,13 @@ class PluginTranslator():
         self.__info_json_content = json.loads(self.__info_json_file.read_text(encoding="UTF-8"))
 
     def __write_info_json(self):
+        if self.__info_json_content is None:
+            self.__logger.warning("No info.json content to write, skipping...")
+            return
         self.__info_json_content['language'] = sorted(set([self.__source_language] + self.__target_languages))
         self.__info_json_file.write_text(json.dumps(self.__info_json_content, ensure_ascii=False, indent='\t'), encoding="UTF-8")
 
-    def __create_deepl_glossaries(self):
+    def __create_deepl_glossaries(self, deepl_translator: deepl.Translator):
         fileDir = Path(__file__).parent
         glossary_file = fileDir/f"{self.__source_language}_glossary.json"
         if not glossary_file.exists():
@@ -171,7 +174,7 @@ class PluginTranslator():
         str_entries = glossary_file.read_text(encoding="UTF-8")
         md5_hash = hashlib.md5(str_entries.encode('utf-8')).hexdigest()
         entries = json.loads(str_entries)
-        deepl_glossaries = self.deepl_translator.list_glossaries()
+        deepl_glossaries = deepl_translator.list_glossaries()
 
         for target_language in self.__target_languages:
             if target_language == self.__source_language or target_language not in entries:
@@ -185,11 +188,11 @@ class PluginTranslator():
                         self.__glossary[target_language] = deepl_glossary
                     else:
                         self.__logger.info(f"Delete existing old glossary {deepl_glossary.name}")
-                        self.deepl_translator.delete_glossary(deepl_glossary)
+                        deepl_translator.delete_glossary(deepl_glossary)
             if self.__glossary[target_language] is None:
                 self.__logger.info(f"Create new glossary {md5_hash}")
-                self.__glossary[target_language] = self.deepl_translator.create_glossary(md5_hash, source_lang=LANGUAGES_TO_DEEPL_GLOSSARY[self.__source_language],
-                                                                                         target_lang=LANGUAGES_TO_DEEPL_GLOSSARY[target_language], entries=entries[target_language])
+                self.__glossary[target_language] = deepl_translator.create_glossary(md5_hash, source_lang=LANGUAGES_TO_DEEPL_GLOSSARY[self.__source_language],
+                                                                                    target_lang=LANGUAGES_TO_DEEPL_GLOSSARY[target_language], entries=entries[target_language])
 
     def find_prompts_in_all_files(self):
         self.__logger.info("Find prompts in all plugin files")
@@ -239,6 +242,8 @@ class PluginTranslator():
     def translate_info_json(self):
         if self.deepl_translator is None:
             return
+        if self.__info_json_content is None:
+            return
 
         if 'description' not in self.__info_json_content:
             self.__logger.warning("You should add a 'Description' in info.json, see https://doc.jeedom.com/fr_FR/dev/structure_info_json")
@@ -275,6 +280,10 @@ class PluginTranslator():
             glossary=self.__glossary[target_language],
             model_type='prefer_quality_optimized'
         )
+        if not isinstance(result, deepl.TextResult):
+            self.__logger.error(f"Unexpected result type: {type(result)}")
+            return ''
+
         return result.text
 
     def get_plugin_translations(self):
