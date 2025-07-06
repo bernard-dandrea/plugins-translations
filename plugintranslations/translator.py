@@ -6,6 +6,8 @@ import hashlib
 
 import deepl
 
+from .throttle import Throttle
+
 from .version import VERSION
 from .source_file import SourceFile
 from .consts import (
@@ -265,6 +267,7 @@ class PluginTranslator():
 
         self.__info_json_content['description'] = descriptions
 
+    @Throttle(seconds=0.1)
     def transalte_with_deepl(self, text: str, target_language: str) -> str:
         if self.__deepl_translator is None:
             return ''
