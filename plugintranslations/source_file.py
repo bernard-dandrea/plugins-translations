@@ -24,7 +24,7 @@ class SourceFile(object):
         content = self._file.read_text(encoding="UTF-8")
         for txt in re.findall("{{(.*?)}}", content):
             if len(txt) != 0:
-                self._logger.warning(f"  add   accolade  : {text}")
+                self._logger.warning(f"  add   accolade  : {txt}")
                 self._add_prompt(txt)
             else:
                 self._logger.warning(f"There is an empty text in <{self._file.as_posix()}>")
