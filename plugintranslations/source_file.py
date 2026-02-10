@@ -24,6 +24,7 @@ class SourceFile(object):
         content = self._file.read_text(encoding="UTF-8")
         for txt in re.findall("{{(.*?)}}", content):
             if len(txt) != 0:
+                self._logger.warning(f"  add   accolade  : {text}")
                 self._add_prompt(txt)
             else:
                 self._logger.warning(f"There is an empty text in <{self._file.as_posix()}>")
@@ -39,6 +40,7 @@ class SourceFile(object):
                     self._logger.warning(f"      Fichier: {self._file.as_uri()}")
                     self._logger.warning(f"      texte  : {text}")
                 else:
+                    self._logger.warning(f"  add   __  : {text}")
                     self._add_prompt(text)
 
     def get_prompts_and_translation(self, language: str, include_empty_translation: bool = False) -> dict[str, str]:
