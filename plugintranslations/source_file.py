@@ -18,6 +18,7 @@ class SourceFile(object):
 
     def _add_prompt(self, text: str):
         if text not in self._prompts:
+            self._logger.warning(f"  prompt added    : {text}")
             self._prompts[text] = Prompt(text)
 
     def search_prompts(self):
