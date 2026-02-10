@@ -48,7 +48,7 @@ class SourceFile(object):
         result = {}
         for prompt in self._prompts.values():
             if include_empty_translation or prompt.has_translation(language):
-                self._logger.warning(f"  prompts  : {prompt}") 
+                self._logger.warning(f"  prompts  : {prompt.get_text}") 
                 result[prompt.get_text()] = prompt.get_translation(language)
 
         return result
